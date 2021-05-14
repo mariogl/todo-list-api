@@ -4,13 +4,12 @@ const express = require("express");
 const morgan = require("morgan");
 const chalk = require("chalk");
 const { serverError, notFoundError, generalError } = require("./errors");
+const routerToDos = require("./routes/toDos");
 
 const app = express();
 
 app.use(morgan("dev"));
-app.get("/", (req, res, next) => {
-  res.send("Hello");
-});
+app.use("/todos", routerToDos);
 app.use(notFoundError);
 app.use(generalError);
 

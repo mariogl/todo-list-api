@@ -1,5 +1,6 @@
 const debug = require("debug")("todo-list:errors");
 const chalk = require("chalk");
+const statusCodes = require("./statusCodes");
 
 const generateError = (message, status) => {
   const error = new Error(message);
@@ -15,13 +16,16 @@ const serverError = (err, port) => {
 };
 
 const notFoundError = (req, res, next) => {
-  const error = generateError("The endpoint doesn't exist", 404);
+  const error = generateError(
+    "The endpoint doesn't exist",
+    statusCodes.notFound
+  );
   next(error);
 };
 
 const generalError = (err, req, res, next) => {
   const error = {
-    code: err.code || 500,
+    code: err.code || statusCodes.serverError,
     message: err.code ? err.message : "General error",
   };
   res.status(error.code).json({ error: true, message: error.message });
