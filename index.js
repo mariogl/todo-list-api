@@ -1,6 +1,6 @@
 require("dotenv").config();
 const debug = require("debug")("todo-list:main");
-
+require("./db"); // DB connection
 const options = require("./cli");
 const initServer = require("./server");
 
