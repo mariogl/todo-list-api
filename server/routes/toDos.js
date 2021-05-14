@@ -1,12 +1,14 @@
 require("dotenv").config();
 const debug = require("debug")("todo-list:routes:todos");
 const express = require("express");
+const { getToDos } = require("../controllers/toDos");
 const statusCodes = require("../statusCodes");
 
 const router = express.Router();
 
-router.get("/", (req, res, next) => {
-  res.send("ToDos list");
+router.get("/", async (req, res, next) => {
+  const response = await getToDos();
+  res.json(response);
 });
 
 router.get("/:idToDo", (req, res, next) => {
