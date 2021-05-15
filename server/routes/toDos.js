@@ -1,10 +1,13 @@
 require("dotenv").config();
 const debug = require("debug")("todo-list:routes:todos");
 const express = require("express");
-const { getToDos, getToDo } = require("../controllers/toDos");
+const { getToDos, getToDo, createToDo } = require("../controllers/toDos");
 const statusCodes = require("../statusCodes");
 const { respondItem } = require("../controllers");
-const { validateIdParam } = require("../middlewares/validation");
+const {
+  validateIdParam,
+  validateToDoBody,
+} = require("../middlewares/validation");
 
 const router = express.Router();
 
@@ -35,9 +38,22 @@ router.get(
 
 // Endpoint to create a ToDo
 // The ToDo is sent in request body
-router.post("/todo", (req, res, next) => {
-  res.status(statusCodes.created).send("New ToDo");
-});
+router.post(
+  "/todo",
+  validateToDoBody, // // Body validation
+  async (req, res, next) => {
+    let response;
+    if (req.validationError) {
+      response = {
+        error: req.validationError,
+      };
+    } else {
+      const newToDo = req.body;
+      response = await createToDo(req.userId, newToDo);
+    }
+    return respondItem(response, res, next);
+  }
+);
 
 // Endpoint to modify a ToDo by its Id
 // The Id is sent in an URL segment

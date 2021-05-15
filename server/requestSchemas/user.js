@@ -5,4 +5,6 @@ const userBodySchema = Joi.object({
   password: Joi.string().required(),
 });
 
-module.exports = userBodySchema;
+module.exports = {
+  userBodySchema,
+};
