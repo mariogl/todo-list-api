@@ -17,18 +17,19 @@ router.get("/", async (req, res, next) => {
 
 // Endpoint to request a single ToDo by its Id
 // The Id is sent in an URL segment
-const idParam = "idToDo";
 router.get(
-  `/:${idParam}`,
-  // Id format validation
-  validateIdParam(idParam),
+  "/:idTodo",
+  validateIdParam, // Id format validation
   async (req, res, next) => {
-    const badRequestError = checkBadRequest(req, idParam);
-    if (badRequestError) {
-      return next(badRequestError);
+    let response;
+    if (req.validationError) {
+      response = {
+        error: req.validationError,
+      };
+    } else {
+      const { idToDo } = req.params;
+      response = await getToDo(idToDo);
     }
-    const { idToDo } = req.params;
-    const response = await getToDo(idToDo);
     return respondItem(response, res, next);
   }
 );
