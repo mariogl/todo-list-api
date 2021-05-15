@@ -2,7 +2,6 @@ require("dotenv").config();
 const debug = require("debug")("todo-list:routes:todos");
 const express = require("express");
 const { getToDos, getToDo } = require("../controllers/toDos");
-const { checkBadRequest } = require("../errors");
 const statusCodes = require("../statusCodes");
 const { respondItem } = require("../controllers");
 const { validateIdParam } = require("../middlewares/validation");
