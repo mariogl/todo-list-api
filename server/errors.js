@@ -1,6 +1,7 @@
 require("dotenv").config();
 const debug = require("debug")("todo-list:errors");
 const chalk = require("chalk");
+const { validationResult } = require("express-validator");
 const statusCodes = require("./statusCodes");
 
 const generateError = (message, status) => {
@@ -36,9 +37,28 @@ const generalError = (err, req, res, next) => {
   res.status(error.code).json({ error: true, message: error.message });
 };
 
+const checkBadRequest = (req, urlParam) => {
+  const errors = validationResult(req);
+  let error = null;
+  if (!errors.isEmpty()) {
+    const errorsMap = errors.mapped();
+    debug(errorsMap);
+
+    if (errorsMap[urlParam]) {
+      // Check URL params first
+      error = generateError(errorsMap[urlParam].msg, statusCodes.badRequest);
+    } else {
+      // Then check request body
+      error = generateError("The request is malformed", statusCodes.badRequest);
+    }
+  }
+  return error;
+};
+
 module.exports = {
   generateError,
   serverError,
   notFoundError,
   generalError,
+  checkBadRequest,
 };

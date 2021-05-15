@@ -1,10 +1,8 @@
 require("dotenv").config();
 const debug = require("debug")("todo-list:routes:todos");
 const express = require("express");
-const { param, validationResult } = require("express-validator");
-const mongoose = require("mongoose");
 const { getToDos, getToDo } = require("../controllers/toDos");
-const { generateError } = require("../errors");
+const { checkBadRequest } = require("../errors");
 const statusCodes = require("../statusCodes");
 const { respondItem } = require("../controllers");
 const { validateIdParam } = require("../middlewares/validation");
@@ -19,16 +17,15 @@ router.get("/", async (req, res, next) => {
 
 // Endpoint to request a single ToDo by its Id
 // The Id is sent in an URL segment
+const idParam = "idToDo";
 router.get(
-  "/:idToDo",
+  `/:${idParam}`,
   // Id format validation
-  validateIdParam("idToDo"),
+  validateIdParam(idParam),
   async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty() && errors.mapped().idToDo) {
-      return next(
-        generateError(errors.mapped().idToDo.msg, statusCodes.badRequest)
-      );
+    const badRequestError = checkBadRequest(req, idParam);
+    if (badRequestError) {
+      return next(badRequestError);
     }
     const { idToDo } = req.params;
     const response = await getToDo(idToDo);
