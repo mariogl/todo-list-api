@@ -12,5 +12,6 @@ module.exports = {
     "no-console": "off",
     "no-unused-vars": "off",
     "no-underscore-dangle": "off",
+    "consistent-return": "off",
   },
 };
