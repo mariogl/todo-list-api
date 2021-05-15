@@ -29,9 +29,6 @@ router.get(
     }
     const { idToDo } = req.params;
     const response = await getToDo(idToDo);
-    if (response.error) {
-      return next(response.error);
-    }
     return respondItem(response, res, next);
   }
 );
