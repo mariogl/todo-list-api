@@ -1,5 +1,5 @@
 require("dotenv").config();
-const debug = require("debug")("todo-list:controllers");
+const debug = require("debug")("todo-list:controllers:todos");
 const ToDo = require("../../db/models/todo");
 const statusCodes = require("../statusCodes");
 const { generateError } = require("../errors");
@@ -10,8 +10,8 @@ const cleanProjection = "-user -__v"; // We don't want these fields in JSON outp
 const getToDos = async () => {
   const toDos = await ToDo.find({}, cleanProjection);
   return createResponse(
-    toDos,
-    generateError("Resource not found", statusCodes.notFound)
+    generateError("Resource not found", statusCodes.notFound),
+    toDos
   );
 };
 
@@ -24,8 +24,7 @@ const getToDo = async (idToDo) => {
     );
   } catch (error) {
     return createResponse(
-      generateError(error.message, statusCodes.serverError),
-      null
+      generateError(error.message, statusCodes.serverError)
     );
   }
 };
