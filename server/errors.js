@@ -1,3 +1,4 @@
+require("dotenv").config();
 const debug = require("debug")("todo-list:errors");
 const chalk = require("chalk");
 const statusCodes = require("./statusCodes");
@@ -24,9 +25,13 @@ const notFoundError = (req, res, next) => {
 };
 
 const generalError = (err, req, res, next) => {
+  debug(err);
   const error = {
     code: err.code || statusCodes.serverError,
-    message: err.code ? err.message : "General error",
+    message:
+      err.code && err.code !== statusCodes.serverError
+        ? err.message
+        : "General error",
   };
   res.status(error.code).json({ error: true, message: error.message });
 };

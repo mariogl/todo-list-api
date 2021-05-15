@@ -1,4 +1,4 @@
-const createResponse = (data, error) => {
+const createResponse = (error, data) => {
   const response = {
     error: null,
     data: null,
@@ -17,7 +17,17 @@ const getListResponse = (data, total) => ({
   data,
 });
 
+const respondItem = async (response, res, next) => {
+  const { error, data } = await response;
+  if (error) {
+    next(error);
+  } else {
+    res.json(data);
+  }
+};
+
 module.exports = {
   createResponse,
   getListResponse,
+  respondItem,
 };
