@@ -4,7 +4,10 @@ const express = require("express");
 const { getToDos, getToDo } = require("../controllers/toDos");
 const statusCodes = require("../statusCodes");
 const { respondItem } = require("../controllers");
-const { validateIdParam } = require("../middlewares/validation");
+const {
+  validateIdParam,
+  validateToDoBody,
+} = require("../middlewares/validation");
 
 const router = express.Router();
 
@@ -35,9 +38,24 @@ router.get(
 
 // Endpoint to create a ToDo
 // The ToDo is sent in request body
-router.post("/todo", (req, res, next) => {
-  res.status(statusCodes.created).send("New ToDo");
-});
+router.post(
+  "/todo",
+  validateToDoBody, // // Body validation
+  async (req, res, next) => {
+    let response;
+    if (req.validationError) {
+      response = {
+        error: req.validationError,
+      };
+    } else {
+      response = {
+        error: null,
+        data: { ok: true },
+      };
+    }
+    return respondItem(response, res, next);
+  }
+);
 
 // Endpoint to modify a ToDo by its Id
 // The Id is sent in an URL segment
