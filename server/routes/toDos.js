@@ -1,7 +1,7 @@
 require("dotenv").config();
 const debug = require("debug")("todo-list:routes:todos");
 const express = require("express");
-const { getToDos, getToDo } = require("../controllers/toDos");
+const { getToDos, getToDo, createToDo } = require("../controllers/toDos");
 const statusCodes = require("../statusCodes");
 const { respondItem } = require("../controllers");
 const {
@@ -48,10 +48,8 @@ router.post(
         error: req.validationError,
       };
     } else {
-      response = {
-        error: null,
-        data: { ok: true },
-      };
+      const newToDo = req.body;
+      response = await createToDo(req.userId, newToDo);
     }
     return respondItem(response, res, next);
   }

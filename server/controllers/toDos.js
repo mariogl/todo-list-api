@@ -29,7 +29,20 @@ const getToDo = async (idToDo) => {
   }
 };
 
+const createToDo = async (userId, toDo) => {
+  try {
+    toDo.user = userId;
+    const toDoCreated = await ToDo.create(toDo);
+    return createResponse(null, toDoCreated);
+  } catch (error) {
+    return createResponse(
+      generateError(error.message, statusCodes.serverError)
+    );
+  }
+};
+
 module.exports = {
   getToDos,
   getToDo,
+  createToDo,
 };
