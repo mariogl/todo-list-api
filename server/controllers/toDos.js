@@ -7,17 +7,20 @@ const { createResponse } = require(".");
 
 const cleanProjection = "-user -__v"; // We don't want these fields in JSON output
 
-const getToDos = async () => {
-  const toDos = await ToDo.find({}, cleanProjection);
+const getToDos = async (userId) => {
+  const toDos = await ToDo.find({ user: userId }, cleanProjection);
   return createResponse(
     generateError("Resource not found", statusCodes.notFound),
     toDos
   );
 };
 
-const getToDo = async (idToDo) => {
+const getToDo = async (userId, idToDo) => {
   try {
-    const toDo = await ToDo.findOne({ _id: idToDo }, cleanProjection);
+    const toDo = await ToDo.findOne(
+      { _id: idToDo, user: userId },
+      cleanProjection
+    );
     return createResponse(
       generateError("Resource not found", statusCodes.notFound),
       toDo
