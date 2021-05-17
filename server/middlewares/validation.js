@@ -1,7 +1,11 @@
 require("dotenv").config();
 const debug = require("debug")("todo-list:middlewares");
 const { userBodySchema } = require("../requestSchemas/user");
-const { toDoParamsSchema, toDoBodySchema } = require("../requestSchemas/todo");
+const {
+  toDoParamsSchema,
+  toDoBodySchema,
+  toDoWithIdBodySchema,
+} = require("../requestSchemas/todo");
 const { generateError } = require("../errors");
 const statusCodes = require("../statusCodes");
 
@@ -28,9 +32,20 @@ const validateToDoBody = (req, res, next) => {
   next();
 };
 
+const validateToDoWithIdBody = (req, res, next) => {
+  validateSchema(
+    req,
+    req.body,
+    toDoWithIdBodySchema,
+    "The request is malformed"
+  );
+  next();
+};
+
 module.exports = {
   validateSchema,
   validateIdParam,
   validateUserBody,
   validateToDoBody,
+  validateToDoWithIdBody,
 };
