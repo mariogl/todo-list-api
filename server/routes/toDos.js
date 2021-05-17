@@ -19,7 +19,7 @@ const router = express.Router();
 
 // Endpoint to request the ToDos list
 router.get("/", async (req, res, next) => {
-  const response = await getToDos();
+  const response = await getToDos(req.userId);
   res.json(response);
 });
 
@@ -36,7 +36,7 @@ router.get(
       };
     } else {
       const { idToDo } = req.params;
-      response = await getToDo(idToDo);
+      response = await getToDo(req.userId, idToDo);
     }
     return respondItem(response, res, next);
   }
