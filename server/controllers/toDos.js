@@ -41,8 +41,27 @@ const createToDo = async (userId, toDo) => {
   }
 };
 
+const modifyToDo = async (userId, toDo) => {
+  try {
+    toDo.user = userId;
+    const toDoModified = await ToDo.findOneAndUpdate(
+      { _id: toDo.id, user: userId },
+      toDo
+    );
+    return createResponse(
+      generateError("User not found", statusCodes.notFound),
+      toDoModified
+    );
+  } catch (error) {
+    return createResponse(
+      generateError(error.message, statusCodes.serverError)
+    );
+  }
+};
+
 module.exports = {
   getToDos,
   getToDo,
   createToDo,
+  modifyToDo,
 };
