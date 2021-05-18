@@ -6,6 +6,7 @@ const {
   getToDo,
   createToDo,
   modifyToDo,
+  deleteToDo,
 } = require("../controllers/toDos");
 const statusCodes = require("../statusCodes");
 const { respondItem } = require("../controllers");
@@ -26,7 +27,7 @@ router.get("/", async (req, res, next) => {
 // Endpoint to request a single ToDo by its Id
 // The Id is sent in an URL segment
 router.get(
-  "/:idTodo",
+  "/:idToDo",
   validateIdParam, // Id format validation
   async (req, res, next) => {
     let response;
@@ -75,6 +76,25 @@ router.put(
     } else {
       const modifiedToDo = req.body;
       response = await modifyToDo(req.userId, modifiedToDo);
+    }
+    return respondItem(response, res, next);
+  }
+);
+
+// Endpoint to delete a ToDo by its Id
+// The deleted ToDo is sent in request body
+router.delete(
+  "/todo/:idToDo",
+  validateIdParam, // Id format validation
+  async (req, res, next) => {
+    let response;
+    if (req.validationError) {
+      response = {
+        error: req.validationError,
+      };
+    } else {
+      const { idToDo } = req.params;
+      response = await deleteToDo(req.userId, idToDo);
     }
     return respondItem(response, res, next);
   }
