@@ -22,7 +22,7 @@ const getToDo = async (userId, idToDo) => {
       cleanProjection
     );
     return createResponse(
-      generateError("Resource not found", statusCodes.notFound),
+      generateError("ToDo not found", statusCodes.notFound),
       toDo
     );
   } catch (error) {
@@ -52,8 +52,28 @@ const modifyToDo = async (userId, toDo) => {
       toDo
     );
     return createResponse(
-      generateError("User not found", statusCodes.notFound),
+      generateError("ToDo not found", statusCodes.notFound),
       toDoModified
+    );
+  } catch (error) {
+    return createResponse(
+      generateError(error.message, statusCodes.serverError)
+    );
+  }
+};
+
+const deleteToDo = async (userId, idToDo) => {
+  try {
+    const removedToDo = await ToDo.deleteOne({ _id: idToDo, user: userId });
+    let removedToDoId;
+    if (removedToDo.deletedCount === 1) {
+      removedToDoId = {
+        id: idToDo,
+      };
+    }
+    return createResponse(
+      generateError("ToDo not found", statusCodes.notFound),
+      removedToDoId
     );
   } catch (error) {
     return createResponse(
@@ -67,4 +87,5 @@ module.exports = {
   getToDo,
   createToDo,
   modifyToDo,
+  deleteToDo,
 };
