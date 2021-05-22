@@ -12,17 +12,24 @@ const app = express();
 
 app.use(morgan("dev"));
 app.use(express.json());
+
 app.use("/todos", auth, routerToDos);
 app.use("/users", routerUsers);
+
 app.use(notFoundError);
 app.use(generalError);
 
-const initServer = (port) => {
+const initializeServer = (port) => {
   const server = app.listen(port, () => {
     debug(chalk.yellow(`Server listening on http://localhost:${port}`));
   });
 
   server.on("error", (err) => serverError(err, port));
+
+  return server;
 };
 
-module.exports = initServer;
+module.exports = {
+  app,
+  initializeServer,
+};

@@ -2,7 +2,7 @@ require("dotenv").config();
 const debug = require("debug")("todo-list:controllers:todos");
 const ToDo = require("../../db/models/todo");
 const statusCodes = require("../statusCodes");
-const { generateError } = require("../errors");
+const { generateCustomError } = require("../errors");
 const { createResponse } = require(".");
 
 const cleanProjection = "-user -__v"; // We don't want these fields in JSON output
@@ -10,7 +10,7 @@ const cleanProjection = "-user -__v"; // We don't want these fields in JSON outp
 const getToDos = async (userId) => {
   const toDos = await ToDo.find({ user: userId }, cleanProjection);
   return createResponse(
-    generateError("Resource not found", statusCodes.notFound),
+    generateCustomError("Resource not found", statusCodes.notFound),
     toDos
   );
 };
@@ -22,12 +22,12 @@ const getToDo = async (userId, idToDo) => {
       cleanProjection
     );
     return createResponse(
-      generateError("ToDo not found", statusCodes.notFound),
+      generateCustomError("Resource not found", statusCodes.notFound),
       toDo
     );
   } catch (error) {
     return createResponse(
-      generateError(error.message, statusCodes.serverError)
+      generateCustomError(error.message, statusCodes.serverError)
     );
   }
 };
@@ -39,7 +39,7 @@ const createToDo = async (userId, toDo) => {
     return createResponse(null, toDoCreated);
   } catch (error) {
     return createResponse(
-      generateError(error.message, statusCodes.serverError)
+      generateCustomError(error.message, statusCodes.serverError)
     );
   }
 };
@@ -52,12 +52,12 @@ const modifyToDo = async (userId, toDo) => {
       toDo
     );
     return createResponse(
-      generateError("ToDo not found", statusCodes.notFound),
+      generateCustomError("User not found", statusCodes.notFound),
       toDoModified
     );
   } catch (error) {
     return createResponse(
-      generateError(error.message, statusCodes.serverError)
+      generateCustomError(error.message, statusCodes.serverError)
     );
   }
 };
@@ -72,12 +72,12 @@ const deleteToDo = async (userId, idToDo) => {
       };
     }
     return createResponse(
-      generateError("ToDo not found", statusCodes.notFound),
+      generateCustomError("ToDo not found", statusCodes.notFound),
       removedToDoId
     );
   } catch (error) {
     return createResponse(
-      generateError(error.message, statusCodes.serverError)
+      generateCustomError(error.message, statusCodes.serverError)
     );
   }
 };

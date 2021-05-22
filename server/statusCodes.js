@@ -2,7 +2,7 @@ const statusCodes = {
   ok: 200,
   created: 201,
   badRequest: 400,
-  forbidden: 403,
+  unauthorized: 401,
   notFound: 404,
   serverError: 500,
 };

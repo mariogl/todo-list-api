@@ -8,6 +8,9 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 12,
   },
+  env: {
+    "jest/globals": true,
+  },
   rules: {
     "no-console": "off",
     "no-unused-vars": "off",

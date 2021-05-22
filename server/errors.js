@@ -3,7 +3,7 @@ const debug = require("debug")("todo-list:errors");
 const chalk = require("chalk");
 const statusCodes = require("./statusCodes");
 
-const generateError = (message, status) => {
+const generateCustomError = (message, status) => {
   const error = new Error(message);
   error.code = status;
   return error;
@@ -14,10 +14,11 @@ const serverError = (err, port) => {
   if (err.code === "EADDRINUSE") {
     debug(chalk.red.bold(`Port ${port} is not available.`));
   }
+  process.exit(1);
 };
 
 const notFoundError = (req, res, next) => {
-  const error = generateError(
+  const error = generateCustomError(
     "The endpoint doesn't exist",
     statusCodes.notFound
   );
@@ -37,7 +38,7 @@ const generalError = (err, req, res, next) => {
 };
 
 module.exports = {
-  generateError,
+  generateCustomError,
   serverError,
   notFoundError,
   generalError,
