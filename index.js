@@ -1,9 +1,9 @@
 require("dotenv").config();
 const debug = require("debug")("todo-list:main");
 require("./db"); // DB connection
-const options = require("./cli");
-const initServer = require("./server");
+const cliOptions = require("./cli");
+const { initializeServer } = require("./server");
 
-const port = options.port ?? process.env.port ?? 5000;
+const port = cliOptions.port ?? process.env.PORT ?? 5000;
 
-initServer(port);
+initializeServer(port);
