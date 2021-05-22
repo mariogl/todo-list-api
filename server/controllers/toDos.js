@@ -7,17 +7,20 @@ const { createResponse } = require(".");
 
 const cleanProjection = "-user -__v"; // We don't want these fields in JSON output
 
-const getToDos = async () => {
-  const toDos = await ToDo.find({}, cleanProjection);
+const getToDos = async (userId) => {
+  const toDos = await ToDo.find({ user: userId }, cleanProjection);
   return createResponse(
     generateCustomError("Resource not found", statusCodes.notFound),
     toDos
   );
 };
 
-const getToDo = async (idToDo) => {
+const getToDo = async (userId, idToDo) => {
   try {
-    const toDo = await ToDo.findOne({ _id: idToDo }, cleanProjection);
+    const toDo = await ToDo.findOne(
+      { _id: idToDo, user: userId },
+      cleanProjection
+    );
     return createResponse(
       generateCustomError("Resource not found", statusCodes.notFound),
       toDo
@@ -59,9 +62,30 @@ const modifyToDo = async (userId, toDo) => {
   }
 };
 
+const deleteToDo = async (userId, idToDo) => {
+  try {
+    const removedToDo = await ToDo.deleteOne({ _id: idToDo, user: userId });
+    let removedToDoId;
+    if (removedToDo.deletedCount === 1) {
+      removedToDoId = {
+        id: idToDo,
+      };
+    }
+    return createResponse(
+      generateCustomError("ToDo not found", statusCodes.notFound),
+      removedToDoId
+    );
+  } catch (error) {
+    return createResponse(
+      generateCustomError(error.message, statusCodes.serverError)
+    );
+  }
+};
+
 module.exports = {
   getToDos,
   getToDo,
   createToDo,
   modifyToDo,
+  deleteToDo,
 };
