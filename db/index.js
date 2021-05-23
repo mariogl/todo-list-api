@@ -3,11 +3,11 @@ const debug = require("debug")("todo-list:db");
 const chalk = require("chalk");
 const mongoose = require("mongoose");
 
-const { NODE_ENV, MONGO_URL, MONGO_TEST_URL } = process.env;
+const { MONGO_URL } = process.env;
 
 mongoose.set("debug", true);
 mongoose.connect(
-  NODE_ENV === "test" ? MONGO_TEST_URL : MONGO_URL,
+  MONGO_URL,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
