@@ -11,7 +11,14 @@ const getToDos = async (userId) => {
   const toDos = await ToDo.find({ user: userId }, cleanProjection);
   return createResponse(
     generateCustomError("Resource not found", statusCodes.notFound),
-    toDos
+    toDos.map((toDo) => {
+      const toDoRenamedId = {
+        ...toDo.toObject(),
+        id: toDo._id,
+      };
+      delete toDoRenamedId._id;
+      return toDoRenamedId;
+    })
   );
 };
 
@@ -21,9 +28,14 @@ const getToDo = async (userId, idToDo) => {
       { _id: idToDo, user: userId },
       cleanProjection
     );
+    const toDoRenamedId = {
+      ...toDo.toObject(),
+      id: toDo._id,
+    };
+    delete toDoRenamedId._id;
     return createResponse(
       generateCustomError("Resource not found", statusCodes.notFound),
-      toDo
+      toDoRenamedId
     );
   } catch (error) {
     return createResponse(
