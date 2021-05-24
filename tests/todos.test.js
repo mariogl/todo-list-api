@@ -87,4 +87,25 @@ describe("ToDos endpoints", () => {
       expect(res.body.data).toHaveLength(initialToDos.length);
     });
   });
+
+  describe("GET single ToDo", () => {
+    const testedToDo = initialToDos[0];
+    const id = testedToDo._id;
+    const getOneUrl = `${endpoints.get}/${id}`;
+    test("should require authorization", async () => {
+      await api.get(getOneUrl).expect(statusCodes.unauthorized);
+    });
+
+    test("should return the requested ToDo", async () => {
+      const res = await api
+        .get(getOneUrl)
+        .set("Authorization", `Bearer ${authToken}`)
+        .expect(statusCodes.ok)
+        .expect("Content-Type", /json/);
+
+      expect(res.body.id).toBe(testedToDo._id);
+      expect(res.body.description).toBe(testedToDo.description);
+      expect(res.body.done).toBe(testedToDo.done);
+    });
+  });
 });
