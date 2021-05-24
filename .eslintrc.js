@@ -4,14 +4,18 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  extends: ["airbnb-base"],
+  extends: ["airbnb-base", "prettier"],
   parserOptions: {
     ecmaVersion: 12,
   },
+  env: {
+    "jest/globals": true,
+  },
   rules: {
-    quotes: ["error", "double"],
     "no-console": "off",
     "no-unused-vars": "off",
-    "comma-dangle": "off",
+    "no-underscore-dangle": "off",
+    "no-param-reassign": "off",
+    "consistent-return": "off",
   },
 };
