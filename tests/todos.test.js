@@ -148,4 +148,28 @@ describe("ToDos endpoints", () => {
       ).toBe(true);
     });
   });
+
+  describe("DELETE ToDo", () => {
+    const testedToDo = initialToDos[0];
+    const id = testedToDo._id;
+    const deleteUrl = `${endpoints.delete}/${id}`;
+    test("should require authorization", async () => {
+      await api.delete(deleteUrl).expect(statusCodes.unauthorized);
+    });
+
+    test("should receive OK from database", async () => {
+      await api
+        .delete(deleteUrl)
+        .set("Authorization", `Bearer ${authToken}`)
+        .expect(statusCodes.ok);
+    });
+
+    test("should remove the requested ToDo", async () => {
+      await api.delete(deleteUrl).set("Authorization", `Bearer ${authToken}`);
+      const res = await api
+        .get(endpoints.get)
+        .set("Authorization", `Bearer ${authToken}`);
+      expect(res.body.data.some((toDo) => toDo.id === id)).toBe(false);
+    });
+  });
 });
