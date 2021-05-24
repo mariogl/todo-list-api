@@ -18,6 +18,7 @@ const endpoints = {
   post: "/todos/todo",
   put: "/todos/todo",
 };
+
 const initialToDos = [
   {
     _id: "60ab4728499fe334e8079d6c",
@@ -129,6 +130,7 @@ describe("ToDos endpoints", () => {
         .send(newToDo)
         .expect(statusCodes.ok)
         .expect("Content-Type", /json/);
+
       expect(res.body.id).toBe(newToDo._id);
       expect(res.body.description).toBe(newToDo.description);
       expect(res.body.done).toBe(newToDo.done);
@@ -140,12 +142,62 @@ describe("ToDos endpoints", () => {
         .set("Authorization", `Bearer ${authToken}`)
         .send(newToDo)
         .expect(statusCodes.ok);
+
       const res = await api
         .get(endpoints.get)
         .set("Authorization", `Bearer ${authToken}`);
+
       expect(
         res.body.data.some((toDo) => toDo.description === newToDo.description)
       ).toBe(true);
+    });
+  });
+
+  describe("PUT ToDo", () => {
+    const testedToDo = initialToDos[0];
+    const modifiedToDo = {
+      id: testedToDo._id,
+      description: "New description",
+      priority: 1,
+      done: true,
+    };
+    const id = modifiedToDo.id;
+
+    test("should require authorization", async () => {
+      await api
+        .put(endpoints.put)
+        .send(modifiedToDo)
+        .expect(statusCodes.unauthorized);
+    });
+
+    test("should return the old ToDo", async () => {
+      const res = await api
+        .put(endpoints.put)
+        .set("Authorization", `Bearer ${authToken}`)
+        .send(modifiedToDo)
+        .expect(statusCodes.ok)
+        .expect("Content-Type", /json/);
+
+      expect(res.body.id).toBe(modifiedToDo._id);
+      expect(res.body.description).toBe(testedToDo.description);
+      expect(res.body.done).toBe(testedToDo.done);
+    });
+
+    test("should modify the ToDo in database", async () => {
+      await api
+        .put(endpoints.put)
+        .set("Authorization", `Bearer ${authToken}`)
+        .send(modifiedToDo)
+        .expect(statusCodes.ok);
+
+      const getOneUrl = `${endpoints.get}/${id}`;
+      const res = await api
+        .get(getOneUrl)
+        .set("Authorization", `Bearer ${authToken}`);
+
+      expect(res.body.id).toBe(modifiedToDo.id);
+      expect(res.body.description).toBe(modifiedToDo.description);
+      expect(res.body.done).toBe(modifiedToDo.done);
     });
   });
 
