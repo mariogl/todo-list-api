@@ -1,5 +1,6 @@
 require("dotenv").config();
 const debug = require("debug")("todo-list:server");
+const cors = require("cors");
 const express = require("express");
 const morgan = require("morgan");
 const chalk = require("chalk");
@@ -11,6 +12,7 @@ const auth = require("./middlewares/auth");
 const app = express();
 
 app.use(morgan("dev"));
+app.use(cors());
 app.use(express.json());
 
 app.use("/todos", auth, routerToDos);
