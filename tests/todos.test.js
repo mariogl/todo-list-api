@@ -108,4 +108,44 @@ describe("ToDos endpoints", () => {
       expect(res.body.done).toBe(testedToDo.done);
     });
   });
+
+  describe("POST ToDo", () => {
+    const newToDo = {
+      description: "ToDo 4 description",
+      priority: 1,
+      done: false,
+    };
+    test("should require authorization", async () => {
+      await api
+        .post(endpoints.post)
+        .send(newToDo)
+        .expect(statusCodes.unauthorized);
+    });
+
+    test("should return the created ToDo", async () => {
+      const res = await api
+        .post(endpoints.post)
+        .set("Authorization", `Bearer ${authToken}`)
+        .send(newToDo)
+        .expect(statusCodes.ok)
+        .expect("Content-Type", /json/);
+      expect(res.body.id).toBe(newToDo._id);
+      expect(res.body.description).toBe(newToDo.description);
+      expect(res.body.done).toBe(newToDo.done);
+    });
+
+    test("should add a ToDo to database", async () => {
+      await api
+        .post(endpoints.post)
+        .set("Authorization", `Bearer ${authToken}`)
+        .send(newToDo)
+        .expect(statusCodes.ok);
+      const res = await api
+        .get(endpoints.get)
+        .set("Authorization", `Bearer ${authToken}`);
+      expect(
+        res.body.data.some((toDo) => toDo.description === newToDo.description)
+      ).toBe(true);
+    });
+  });
 });
